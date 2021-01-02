@@ -16,12 +16,14 @@
 
 set -eu
 
-DSEP="$(locale decimal_point)"
-PING_INTERVAL=0${DSEP}001
-PING_TIMEOUT=0${DSEP}01
+# Disabled localized decimal points etc.
+export LC_ALL=C
+
+PING_INTERVAL=0.001
+PING_TIMEOUT=0.01
 PING_TEST_COUNT=1000
 IPERF_TEST_DURATION=1
-IPERF_THROUGHPUT_MIN_TOLERANCE=0${DSEP}9
+IPERF_THROUGHPUT_MIN_TOLERANCE=0.9
 
 # Check for deps
 dep_errors=0
@@ -66,6 +68,7 @@ fi
 run_ping() {
     # Run ping $1 times
     count=$1
+    # "LANG=C" to disable localized decimal point
     ping -I"$interface" -i"$PING_INTERVAL" -W"$PING_TIMEOUT" -c"$count" -q "$server" 2>/dev/null
 }
 
@@ -102,21 +105,21 @@ while true; do
     printf '\e[100m%-20s\e[104m%-20s\e[0m\n' "Server:" "$server"
     echo
 
-    # Wait for L2 and L3 up
+    # Wait for L2 up, L3 up, speed and duplex
     echo
     echo -e "\e[44mLink\e[0m"
+    echo "Waiting for link ..."
+
     while [[ $(cat "$interface_dir/operstate") != "up" ]]; do
         sleep 0.1
     done
     echo "L2 up."
+
     while [[ $(run_ping 1 | parse_ping_loss) != 0 ]]; do
         sleep 0.1
     done
     echo "L3 up."
 
-    # Test duplex and speed
-    echo
-    echo -e "\e[44mSpeed and duplex\e[0m"
     actual_speed="$(cat "$interface_dir/speed")"
     if [[ $actual_speed = $speed ]]; then
         echo "Speed OK."
@@ -124,6 +127,7 @@ while true; do
         echo -e "\e[31mError: Wrong speed: $actual_speed\e[0m"
         failure=1
     fi
+
     actual_duplex="$(cat "$interface_dir/duplex")"
     if [[ $actual_duplex = $duplex ]]; then
         echo "Duplex OK."
@@ -148,10 +152,11 @@ while true; do
     # Run iPerf3 test
     echo
     echo -e "\e[44miPerf3\e[0m"
+    min_speed=$(awk -v x="$speed" -v y="$IPERF_THROUGHPUT_MIN_TOLERANCE" 'BEGIN{print x * y}')
     raw_iperf_tx_output=$(run_iperf $IPERF_TEST_DURATION)
     echo "$raw_iperf_tx_output" | tail -n3 | head -n1
     iperf_tx_speed="$(echo "$raw_iperf_tx_output" | parse_iperf_speed)"
-    if (( iperf_tx_speed >= speed * IPERF_THROUGHPUT_MIN_TOLERANCE )); then
+    if (( iperf_tx_speed >= min_speed )); then
         echo "Transmit throughput OK."
     else
         echo -e "\e[31mError: Transmit throughput too low: ${iperf_tx_speed}Mb/s\e[0m"
@@ -160,7 +165,7 @@ while true; do
     raw_iperf_rx_output=$(run_iperf $IPERF_TEST_DURATION reverse)
     echo "$raw_iperf_rx_output" | tail -n3 | head -n1
     iperf_rx_speed="$(echo "$raw_iperf_rx_output" | parse_iperf_speed)"
-    if (( iperf_tx_speed >= speed * IPERF_THROUGHPUT_MIN_TOLERANCE )); then
+    if (( iperf_tx_speed >= min_speed )); then
         echo "Recive throughput OK."
     else
         echo -e "\e[31mError: Receive throughput too low: ${iperf_tx_speed}Mb/s\e[0m"
@@ -188,7 +193,7 @@ while true; do
 
     # Wait for L2 down
     echo
-    echo -e "\e[2mWaiting for cable to be disconnected before restarting ...\e[0m"
+    echo -e "\e[2mWaiting for cable to be disconnected before repeating ...\e[0m"
     while [[ $(cat "$interface_dir/operstate") = "up" ]]; do
         sleep 0.1
     done
