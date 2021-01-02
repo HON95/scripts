@@ -7,7 +7,7 @@
 #   If using multiple interfaces, you may spin up a multiple iPerf3 servers and cable tester scripts
 #   to test with all interfaces concurrently.
 # Type: Script
-# Dependencies: ip iperf3
+# Dependencies: iperf3
 # Version: 1.0.0
 # Author: HON
 
