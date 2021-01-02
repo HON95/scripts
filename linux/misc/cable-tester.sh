@@ -88,8 +88,8 @@ run_iperf() {
 }
 
 parse_iperf_speed() {
-    # Print Mb/s throughput as speed w/o unit
-    tail -n3 | head -n1 | grep -Po '[0-9]+(\.[0-9]*)?(?= Mbits/sec)'
+    # Print Mb/s throughput as integer speed w/o unit
+    tail -n3 | head -n1 | grep -Po '[0-9]+(?=(\.[0-9]*)? Mbits/sec)'
 }
 
 while true; do
