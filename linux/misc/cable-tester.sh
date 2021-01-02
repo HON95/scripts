@@ -74,7 +74,7 @@ run_ping() {
 
 parse_ping_loss() {
     # Parse ping output from STDIN and print packet loss w/o unit
-    tail -n2 | head -n1 | grep -Po '[0-9]+(?=% packet loss)'
+    tail -n2 | head -n1 | grep -Po '(?<=\s)[0-9]+(?=% packet loss)'
 }
 
 run_iperf() {
@@ -89,7 +89,7 @@ run_iperf() {
 
 parse_iperf_speed() {
     # Print Mb/s throughput as integer speed w/o unit
-    tail -n3 | head -n1 | grep -Po '[0-9]+(?=(\.[0-9]*)? Mbits/sec)'
+    tail -n3 | head -n1 | grep -Po '(?<=\s)[0-9]+(?=(\.[0-9]*)? Mbits/sec)'
 }
 
 while true; do
