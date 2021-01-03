@@ -99,6 +99,7 @@ while true; do
     clear
     echo -e "\e[45m\e[1mCABLE TESTER\e[0m"
     echo
+    echo
     printf '\e[100m%-20s\e[104m%-20s\e[0m\n' "Interface:" "$interface"
     printf '\e[100m%-20s\e[104m%-20s\e[0m\n' "Speed:" "$speed"
     printf '\e[100m%-20s\e[104m%-20s\e[0m\n' "Duplex:" "$duplex"
@@ -138,6 +139,7 @@ while true; do
 
     # Run ping test
     echo
+    echo
     echo -e "\e[44mPing\e[0m"
     raw_ping_output=$(run_ping $PING_TEST_COUNT)
     echo "$raw_ping_output" | tail -n2
@@ -150,6 +152,7 @@ while true; do
     fi
 
     # Run iPerf3 test
+    echo
     echo
     echo -e "\e[44miPerf3\e[0m"
     min_speed=$(awk -v x="$speed" -v y="$IPERF_THROUGHPUT_MIN_TOLERANCE" 'BEGIN{print x * y}')
