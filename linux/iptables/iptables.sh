@@ -63,7 +63,7 @@ ipt6 -A INPUT -p udp --dport 547 -j ACCEPT
 
 ## Input Special
 # SSH
-ipt46 -A INPUT -p tcp --dport 22 -j ACCEPT
+#ipt46 -A INPUT -p tcp --dport 22 -j ACCEPT
 
 ## Output
 # Accept all
