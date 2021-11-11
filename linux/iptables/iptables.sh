@@ -5,6 +5,7 @@
 set -eu
 
 command -v iptables 1>/dev/null || (echo "Please install iptables." 1>&2 && exit -1)
+# Debian
 command -v netfilter-persistent 1>/dev/null || (echo "Please install iptables-persistent and netfilter-persistent." 1>&2 && exit -1)
 
 ## Helper functions
@@ -23,7 +24,11 @@ ipt46() {
 }
 
 ipt_save() {
+    # Debian
     netfilter-persistent save || return $?
+    # Arch
+    #iptables-save -f /etc/iptables/iptables.rules || return $?
+    #ip6tables-save -f /etc/iptables/ip6tables.rules || return $?
 }
 
 ## Policies
