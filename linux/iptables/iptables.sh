@@ -2,6 +2,8 @@
 
 # Simple IPTables script for servers.
 
+# TODO: Do the Debian/Arch/whatever detection automatically. It assumes to Debian now, BTW.
+
 set -eu
 
 command -v iptables 1>/dev/null || (echo "Please install iptables." 1>&2 && exit -1)
