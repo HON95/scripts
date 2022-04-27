@@ -11,6 +11,7 @@
 # Author: HON
 
 # Changelog:
+# 1.1.7: Fixed MOTD header spacing.
 # 1.1.6: Added screen clearing option.
 # 1.1.5: Added excluded groups .
 # 1.1.4: Added check for required shell features and list of excluded users.
@@ -78,15 +79,14 @@ done
 if [[ $USE_CLEAR = "yes" ]]; then
   clear
 fi
-  
+
 # Pre MOTD
 if [[ $USE_MOTD_HEADER = "yes" ]] && [[ -f $MOTD_HEADER_PATH ]]; then
   if [[ $USE_MOTD_HEADER_LOLCAT = "yes" ]]; then
-  cat "$MOTD_HEADER_PATH" | lolcat
-else
-  cat "$MOTD_HEADER_PATH"
-fi
-  echo
+    cat "$MOTD_HEADER_PATH" | lolcat
+  else
+    cat "$MOTD_HEADER_PATH"
+  fi
 fi
 
 # Neofetch
