@@ -24,9 +24,9 @@ bright_max=$(cat "$BACKLIGHT_DIR/max_brightness")
 if [[ $# == 0 ]]; then
     echo "$((100 * $bright_current / $bright_max))%"
 elif [[ $1 =~ ^[\+\-]?[0-9]+%?$ ]]; then
-    prefix=$(egrep -o '[+-]' <<<$1)
-    suffix=$(egrep -o '%' <<<$1)
-    value=$(egrep -o '[0-9]+' <<<$1)
+    prefix=$(grep -Eo '[+-]' <<<$1)
+    suffix=$(grep -Eo '%' <<<$1)
+    value=$(grep -Eo '[0-9]+' <<<$1)
 
     # Calculate percentage
     if [[ $suffix == "%" ]]; then
